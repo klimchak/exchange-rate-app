@@ -1,0 +1,55 @@
+<aura:component description="exchangeComponent" controller="exchangeComponentController" implements="flexipage:availableForAllPageTypes,force:appHostable">
+    <aura:handler value="{!this}" name="init" action="{!c.doInit}" />
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="dataExchange" type="Object"/>
+    <aura:attribute name="currencyNameList" type="String[]" default="GBP"/>
+    <aura:attribute name="nowDate" type="Date" />
+    <aura:attribute name="startDate" type="Date" />
+    <aura:attribute name="endDate" type="Date" />
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+    <aura:attribute name="sortDirection" type="String" default="asc" />
+    <aura:attribute name="defaultSortDirection" type="String" default="asc" />
+    <aura:attribute name="sortedBy" type="String" />
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <div>
+        <aura:if isTrue="{! v.loaded }">
+            <aura:set attribute="else">
+                <lightning:spinner alternativeText="Loading" />
+            </aura:set>
+        </aura:if>
+    </div>
+    <div class="slds-grid slds-wrap slds-grid_align-center">
+        <div class="slds-size_1-of-4 slds-grid_align-center slds-p-right_medium">
+            <div id="box1" class="slds-box slds-box_x-small slds-text-align_right slds-m-bottom_medium">
+                <lightning:select aura:id="valSelDefaultCurrency" name="select" label="Select currency" onchange="{!c.selDefaultCurrency}">
+                    <aura:iteration items="{!v.currencyNameList}" var="curr">
+                        <option text="{!curr}"></option>
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+            <div class="slds-box slds-box_x-small slds-text-align_right slds-m-bottom_medium">
+                <lightning:input type="date" label="Start date" name="inputStartDate" checked="{! v.startDate }" value="{! v.startDate }" onchange="{! c.selStartDate }" min="2006-01-01" max="{! v.nowDate }"/>
+            </div>
+            <div class="slds-box slds-box_x-small slds-text-align_right slds-m-bottom_medium">
+                <lightning:input type="date" label="End date" name="inputEndDate" checked="{! v.endDate }" value="{! v.endDate }" onchange="{! c.selEndDate }" min="2006-01-01" max="{! v.nowDate }"/>
+            </div>
+            <div id="box2" class="slds-box slds-box_x-small slds-text-align_center slds-m-bottom_medium">
+                <lightning:button label="Search" name="searchInput" onclick="{! c.getDataOnClickButton }" />
+            </div>
+        </div>
+        <div class="slds-size_3-of-4 slds-grid_align-center">
+            <div id="boxTable" class="slds-box slds-box_x-small slds-p-around_medium">
+                <lightning:datatable
+                        keyField="id"
+                        data="{! v.dataExchange }"
+                        columns="{! v.columns }"
+                        hideCheckboxColumn="true"
+                        defaultSortDirection="{!v.defaultSortDirection}"
+                        sortedDirection="{!v.sortDirection}"
+                        sortedBy="{!v.sortedBy}"
+                        onsort="{!c.handleSort}"
+                        />
+            </div>
+        </div>
+    </div>
+</aura:component>
